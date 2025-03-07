@@ -101,12 +101,14 @@ class Book {
             return;
         }
 
-        std::cout << "Phonebook contains " << count << " entries." << std::endl;
-        std::cout << "First" << COLUMN_TAB_WIDTH << "Last" << COLUMN_TAB_WIDTH
-                  << "Phone Number" << std::endl;
+        std::cout << "Phonebook contains " << count << " entries.\n"
+                  << std::endl;
+        std::cout << "#\t" << "First" << COLUMN_TAB_WIDTH << "Last"
+                  << COLUMN_TAB_WIDTH << "Phone Number" << std::endl;
         std::cout << DIVIDER << std::endl;
         // Call recursive function to perform in order traversal.
-        inorder_display(head);
+        size_t counter = 1;
+        inorder_display(head, counter);
         std::cout << DIVIDER << std::endl;
     }
 
@@ -378,18 +380,19 @@ class Book {
         return nullptr;
     }
 
-    void inorder_display(BST_Node *ptr) {
+    void inorder_display(BST_Node *ptr, size_t &counter) {
         // Recursive base case
         if (!ptr) {
             return;
         }
         // Recurse down left subtree
-        inorder_display(ptr->left);
+        inorder_display(ptr->left, counter);
         // /Once down the left sub-tree as the function calls get popped off the
         // stack they return here in their execution and will print the
         // information.
+        std::cout << counter++ << "\t";
         ptr->person.display_person();
-        inorder_display(ptr->right);
+        inorder_display(ptr->right, counter);
         // Go down the right side of the tree.
     }
 
@@ -413,7 +416,6 @@ class Book {
                 compare_names(ptr->left->person, *p) == 0) {
                 return ptr;
             }
-            std::cout << "Going left" << std::endl;
             // Recurse down left subtree.
             return locate_node(ptr->left, p, return_parent);
         } else {
@@ -421,7 +423,6 @@ class Book {
                 compare_names(ptr->right->person, *p) == 0) {
                 return ptr;
             }
-            std::cout << "Going left" << std::endl;
             // Recurse down right subtree.
             return locate_node(ptr->right, p, return_parent);
         }
