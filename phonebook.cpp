@@ -23,6 +23,7 @@ class Person {
     std::string phone_number;
     Person(std::string first, std::string last, std::string phone_number)
         : first(first), last(last), phone_number(phone_number) {}
+
     Person(std::string first, std::string last) : first(first), last(last) {}
 
     void display_person() {
@@ -109,7 +110,7 @@ class Book {
         // Call recursive function to perform in order traversal.
         size_t counter = 1;
         inorder_display(head, counter);
-        std::cout << DIVIDER << std::endl;
+        std::cout << DIVIDER << "\n" << std::endl;
     }
 
     BST_Node *find_entry(std::string first, std::string last) {
@@ -223,8 +224,8 @@ class Book {
             if (next_element != entry->right) {
                 // If the next element isn't the node's direct child, then we
                 // need to reposition its parent to point to the next value
-                // beyond the next element.
-                next_element_parent->left = next_element->left;
+                // beyond the in order successor.
+                next_element_parent->left = next_element->right;
                 // We also need to move the right pointer of the right child of
                 // the deleted node.
                 next_element->right = entry->right;
@@ -297,7 +298,10 @@ class Book {
         // Encode a line for each node we visit.
         for (size_t i = 0; i < count; i++) {
             Person p = preorder_list[i]->person;
-            File << p.encode() << "\n";
+            File << p.encode();
+            if (i < count - 1) {
+                File << "\n";
+            }
         }
         // Clean up the list we used.
         delete[] preorder_list;
@@ -324,6 +328,9 @@ class Book {
         while (getline(File, line)) {
             // Decode the file line by line and build a new tree based
             // on the nodes read.
+            if (line.length() == 0) {
+                continue;
+            }
             Person p = Person::decode(line);
             add_entry(p.first, p.last, p.phone_number);
         }
@@ -374,7 +381,6 @@ class Book {
             return insertion(ptr->right, new_node);
         } else {
             std::cout << "\nName already exists in phonebook\n" << std::endl;
-            return nullptr;
         }
 
         return nullptr;
@@ -589,6 +595,8 @@ class UserInterface {
                     } else {
                         std::cout << "\nEntry not found\n" << std::endl;
                     }
+                } else {
+                    std::cout << "\nCancelled\n" << std::endl;
                 }
                 wait_for_key();
                 break;
@@ -605,11 +613,15 @@ class UserInterface {
                 std::string first_name = get_string_input("First name: ", true);
                 std::string last_name = get_string_input("Last name: ", true);
                 std::string phone_number =
-                    get_string_input("New phone number: ");
-                std::cout << "\nConfirm this information looks correct? (y/n)"
+                    get_string_input("\nNew phone number: ");
+                std::cout << "\nConfirm this information looks correct? (y/n)\n"
                           << std::endl;
-                std::cout << "\t ->" << first_name << " " << last_name << "\t"
-                          << phone_number << std::endl;
+                std::cout << "First" << COLUMN_TAB_WIDTH << "Last"
+                          << COLUMN_TAB_WIDTH << "Phone Number" << std::endl;
+                std::cout << DIVIDER << std::endl;
+                std::cout << first_name << COLUMN_TAB_WIDTH << last_name
+                          << COLUMN_TAB_WIDTH << phone_number << std::endl;
+
                 bool confirmation = get_confirmation(": ");
                 if (confirmation) {
                     Person *p = phonebook->change_entry(first_name, last_name,
@@ -617,6 +629,8 @@ class UserInterface {
                     if (p) {
                         std::cout << "\nSuccess\n" << std::endl;
                     }
+                } else {
+                    std::cout << "\nCancelled\n" << std::endl;
                 }
 
                 wait_for_key();
@@ -684,7 +698,7 @@ class UserInterface {
                 std::cout << DIVIDER << std::endl;
                 bool confirmation = true;
                 if (!phonebook->is_empty()) {
-                    bool confirmation = get_confirmation(
+                    confirmation = get_confirmation(
                         "Are you sure you wish to load a new phonebook? It "
                         "will "
                         "clear your current entires. (y/n)\n: ");
@@ -702,7 +716,14 @@ class UserInterface {
                 break;
             }
             case 9: {
-                std::cout << "Goodbye\n" << std::endl;
+                bool confirmation =
+                    get_confirmation("Are you sure you want to exit? You may "
+                                     "have unsaved changes. (y/n)\n: ");
+                if (!confirmation) {
+                    std::cout << "\nCancelled\n" << std::endl;
+                    break;
+                }
+                std::cout << "\nGoodbye\n" << std::endl;
                 return;
             }
 
