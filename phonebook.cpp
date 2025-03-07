@@ -352,7 +352,7 @@ class Book {
     }
 
     bool is_empty() {
-        if (!head and count != 0) {
+        if (!head && count != 0) {
             throw std::runtime_error("Error: Node count mismatch. Head doesn't "
                                      "exist but the count isn't zero!");
         }
