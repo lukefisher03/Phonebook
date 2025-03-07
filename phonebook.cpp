@@ -128,12 +128,12 @@ class Book {
         BST_Node *entry = find_entry(first, last);
 
         if (!entry) {
-            std::cout << "\nCould not locate entry" << std::endl;
+            std::cout << "\nCould not locate entry\n" << std::endl;
             return nullptr;
         }
 
         if (phone_number.length() <= 0) {
-            std::cout << "\nPhone number cannot be blank" << std::endl;
+            std::cout << "\nPhone number cannot be blank\n" << std::endl;
             return nullptr;
         }
 
@@ -584,15 +584,12 @@ class UserInterface {
                 if (confirmation) {
                     Person *p = phonebook->change_entry(first_name, last_name,
                                                         phone_number);
-                    if (!p) {
-                        std::cout << "\nFailed" << std::endl;
-                    } else {
-                        std::cout << "\nSuccess" << std::endl;
+                    if (p) {
+                        std::cout << "\nSuccess\n" << std::endl;
                     }
                 }
 
                 wait_for_key();
-
                 break;
             }
             case 5: {
