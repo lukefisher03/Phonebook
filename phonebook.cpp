@@ -317,15 +317,16 @@ class Book {
 
     bool load() {
         // Load a saved phonebook.
-        if (!std::filesystem::exists(SAVE_FILE_NAME)) {
+        std::ifstream File(SAVE_FILE_NAME);
+        if (!File.good()) {
             // Ensure the save file exists.
             std::cout << "No save file located, please save a phonebook "
                          "before loading."
                       << std::endl;
+            File.close();
             return false;
         }
 
-        std::ifstream File(SAVE_FILE_NAME);
         std::string line;
 
         // Clear the phonebook if we're going to load a new one in.
