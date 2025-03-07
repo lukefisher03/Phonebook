@@ -68,12 +68,12 @@ class BST_Node {
     BST_Node *right;
 
     BST_Node(std::string first, std::string last, std::string phone_number)
-        : person(first, last, phone_number), left(NULL), right(NULL) {}
+        : person(first, last, phone_number), left(nullptr), right(nullptr) {}
 };
 
 class Book {
   public:
-    Book() : head(NULL), count(0) {}
+    Book() : head(nullptr), count(0) {}
 
     bool add_entry(std::string first, std::string last,
                    std::string phone_number) {
@@ -115,7 +115,8 @@ class Book {
         // Convert first and last name to uppercase.
         first_last_to_upper(first, last);
         // Run locate node recursive search.
-        return locate_node(ptr, &Person(first, last), false);
+        Person p{first, last};
+        return locate_node(ptr, &p, false);
     }
 
     Person *change_entry(std::string first, std::string last,
@@ -128,12 +129,12 @@ class Book {
 
         if (!entry) {
             std::cout << "\nCould not locate entry" << std::endl;
-            return NULL;
+            return nullptr;
         }
 
         if (phone_number.length() <= 0) {
             std::cout << "\nPhone number cannot be blank" << std::endl;
-            return NULL;
+            return nullptr;
         }
 
         entry->person.phone_number = phone_number;
@@ -167,7 +168,7 @@ class Book {
         // Locate the parent of the node we wish to delete
         BST_Node *parent = locate_node(ptr, &p, true);
 
-        // locate_node should never return NULL in this case. So, end here
+        // locate_node should never return nullptr in this case. So, end here
         // if the value to delete doesn't exist. locate_node will return
         // the value itself if it has no parent (ie. it's the root node).
         if (!parent)
@@ -263,16 +264,16 @@ class Book {
             delete entry;
             count--;
         } else {
-            // Node is a leaf node. Set it to NULL and update its parent.
+            // Node is a leaf node. Set it to nullptr and update its parent.
             delete entry;
             count--;
-            entry = NULL;
+            entry = nullptr;
             if (direction == 1) {
-                parent->right = NULL;
+                parent->right = nullptr;
             } else if (direction == -1) {
-                parent->left = NULL;
+                parent->left = nullptr;
             } else {
-                head = NULL;
+                head = nullptr;
             }
         }
 
@@ -336,7 +337,7 @@ class Book {
     void clear() {
         // Clear out the BST.
         clear_BST(head);
-        head = NULL;
+        head = nullptr;
         count = 0;
     }
 
@@ -348,7 +349,7 @@ class Book {
         // Check whether or not the new node is less than the pointer
         if (compare_names(ptr->person, new_node->person) == 1) {
             // If new_node belongs to the left of the pointer but the left child
-            // is NULL then we can assign it to be the new_node.
+            // is nullptr then we can assign it to be the new_node.
             if (!ptr->left) {
                 ptr->left = new_node;
                 count++;
@@ -367,10 +368,10 @@ class Book {
             return insertion(ptr->right, new_node);
         } else {
             std::cout << "\nName already exists in phonebook\n" << std::endl;
-            return NULL;
+            return nullptr;
         }
 
-        return NULL;
+        return nullptr;
     }
 
     void inorder_display(BST_Node *ptr) {
@@ -390,10 +391,10 @@ class Book {
 
     BST_Node *locate_node(BST_Node *ptr, Person *p, bool return_parent) {
         if (!ptr) {
-            // If the pointer is null, return null.
+            // If the pointer is nullptr, return nullptr.
             // This means that the tree is either empty
             // or the target isn't in the tree.
-            return NULL;
+            return nullptr;
         }
 
         if (compare_names(ptr->person, *p) == 0) {
@@ -422,7 +423,7 @@ class Book {
 
     void build_preorder_list(BST_Node *ptr, BST_Node **l, size_t &counter) {
         // Perform preorder traversal. Root, left, right.
-        if (ptr == NULL) {
+        if (ptr == nullptr) {
             return;
         }
 
@@ -436,7 +437,7 @@ class Book {
 
     void clear_BST(BST_Node *ptr) {
         // Perform post order traversal to clear the tree.
-        if (ptr == NULL) {
+        if (ptr == nullptr) {
             return;
         }
 
