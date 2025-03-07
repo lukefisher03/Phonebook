@@ -11,10 +11,9 @@
 // Search for and load in a save file if found.
 #define LOAD_ON_STARTUP true
 // For spacing purposes.
-#define COLUMN_TAB_WIDTH "\t\t\t\t"
+#define COLUMN_TAB_WIDTH "\t\t\t"
 #define DIVIDER                                                                \
-    "------------------------------------------------------------------------" \
-    "------------"
+    "------------------------------------------------------------------------"
 
 // Define Person class.
 class Person {
@@ -84,21 +83,20 @@ class Book {
         BST_Node *new_node = new BST_Node(first, last, phone_number);
 
         // Check if the tree is empty.
-        if (!head) {
+        if (is_empty()) {
             // If empty, make the new node the new head.
             this->head = new_node;
             count++;
             return true;
         }
 
-        BST_Node *ptr = head;
         // Return a boolean value depending on success.
-        return !!this->insertion(ptr, new_node);
+        return !!this->insertion(head, new_node);
     }
 
     void display_book() {
         // Perform an inorder traversal on the tree.
-        if (!head) {
+        if (is_empty()) {
             std::cout << "\nNo records\n" << std::endl;
             return;
         }
@@ -113,12 +111,11 @@ class Book {
     }
 
     BST_Node *find_entry(std::string first, std::string last) {
-        BST_Node *ptr = head;
         // Convert first and last name to uppercase.
         first_last_to_upper(first, last);
         // Run locate node recursive search.
         Person p{first, last};
-        return locate_node(ptr, &p, false);
+        return locate_node(head, &p, false);
     }
 
     Person *change_entry(std::string first, std::string last,
@@ -160,7 +157,6 @@ class Book {
 
         // Convert to uppercase.
         first_last_to_upper(first, last);
-        BST_Node *ptr = head;
         Person p{first, last};
 
         int direction =
@@ -168,7 +164,7 @@ class Book {
                // to the parent, and 1 means it's on the right.
 
         // Locate the parent of the node we wish to delete
-        BST_Node *parent = locate_node(ptr, &p, true);
+        BST_Node *parent = locate_node(head, &p, true);
 
         // locate_node should never return nullptr in this case. So, end here
         // if the value to delete doesn't exist. locate_node will return
@@ -283,17 +279,15 @@ class Book {
     }
 
     bool save() {
-
         // Nothing to save.
-        if (!head) {
+        if (is_empty()) {
             return false;
         }
 
         // Create a list to store the nodes as we do a preorder traversal.
         BST_Node **preorder_list = new BST_Node *[count];
-        BST_Node *ptr = head;
         size_t counter = 0;
-        build_preorder_list(ptr, preorder_list, counter);
+        build_preorder_list(head, preorder_list, counter);
 
         std::ofstream File(SAVE_FILE_NAME);
         File.clear();
@@ -341,6 +335,14 @@ class Book {
         clear_BST(head);
         head = nullptr;
         count = 0;
+    }
+
+    bool is_empty() {
+        if (!head and count != 0) {
+            throw std::runtime_error("Error: Node count mismatch. Head doesn't "
+                                     "exist but the count isn't zero!");
+        }
+        return !head;
     }
 
   private:
@@ -411,6 +413,7 @@ class Book {
                 compare_names(ptr->left->person, *p) == 0) {
                 return ptr;
             }
+            std::cout << "Going left" << std::endl;
             // Recurse down left subtree.
             return locate_node(ptr->left, p, return_parent);
         } else {
@@ -418,6 +421,7 @@ class Book {
                 compare_names(ptr->right->person, *p) == 0) {
                 return ptr;
             }
+            std::cout << "Going left" << std::endl;
             // Recurse down right subtree.
             return locate_node(ptr->right, p, return_parent);
         }
@@ -509,6 +513,11 @@ class UserInterface {
                 std::cout << DIVIDER << std::endl;
                 std::cout << "Find entry" << std::endl;
                 std::cout << DIVIDER << std::endl;
+                if (phonebook->is_empty()) {
+                    std::cout << "\nPhonebook is empty\n" << std::endl;
+                    wait_for_key();
+                    break;
+                }
                 std::string first_name = get_string_input("First name: ", true);
                 std::string last_name = get_string_input("Last name: ", true);
                 BST_Node *entry = phonebook->find_entry(first_name, last_name);
@@ -558,6 +567,11 @@ class UserInterface {
                 std::cout << DIVIDER << std::endl;
                 std::cout << "Delete entry" << std::endl;
                 std::cout << DIVIDER << std::endl;
+                if (phonebook->is_empty()) {
+                    std::cout << "\nPhonebook is empty\n" << std::endl;
+                    wait_for_key();
+                    break;
+                }
                 std::string first_name = get_string_input("First name: ", true);
                 std::string last_name = get_string_input("Last name: ", true);
                 std::cout
@@ -582,6 +596,11 @@ class UserInterface {
                 std::cout << DIVIDER << std::endl;
                 std::cout << "Change entry" << std::endl;
                 std::cout << DIVIDER << std::endl;
+                if (phonebook->is_empty()) {
+                    std::cout << "\nPhonebook is empty\n" << std::endl;
+                    wait_for_key();
+                    break;
+                }
                 std::string first_name = get_string_input("First name: ", true);
                 std::string last_name = get_string_input("Last name: ", true);
                 std::string phone_number =
@@ -612,6 +631,11 @@ class UserInterface {
                 std::cout << DIVIDER << std::endl;
                 std::cout << "Clearing phonebook" << std::endl;
                 std::cout << DIVIDER << std::endl;
+                if (phonebook->is_empty()) {
+                    std::cout << "\nPhonebook is empty\n" << std::endl;
+                    wait_for_key();
+                    break;
+                }
                 bool confirmation =
                     get_confirmation("Are you sure you wish to delete the "
                                      "entire phonebook? (y/n)\n: ");
@@ -629,6 +653,11 @@ class UserInterface {
                 std::cout << DIVIDER << std::endl;
                 std::cout << "Save Phonebook" << std::endl;
                 std::cout << DIVIDER << std::endl;
+                if (phonebook->is_empty()) {
+                    std::cout << "\nPhonebook is empty\n" << std::endl;
+                    wait_for_key();
+                    break;
+                }
                 bool confirmation =
                     get_confirmation("Saving will overwrite previous save, "
                                      "continue? (y/n)\n: ");
@@ -641,9 +670,8 @@ class UserInterface {
                               << "\n"
                               << std::endl;
                 } else {
-                    std::cout
-                        << "\nSave failed. Ensure the phonebook isn't empty.\n"
-                        << std::endl;
+                    std::cout << "\nSave failed. Possible I/O error.\n"
+                              << std::endl;
                 }
 
                 wait_for_key();
@@ -653,9 +681,13 @@ class UserInterface {
                 std::cout << DIVIDER << std::endl;
                 std::cout << "Loading phonebook" << std::endl;
                 std::cout << DIVIDER << std::endl;
-                bool confirmation = get_confirmation(
-                    "Are you sure you wish to load a new phonebook? It will "
-                    "clear your current entires. (y/n)\n: ");
+                bool confirmation = true;
+                if (!phonebook->is_empty()) {
+                    bool confirmation = get_confirmation(
+                        "Are you sure you wish to load a new phonebook? It "
+                        "will "
+                        "clear your current entires. (y/n)\n: ");
+                }
                 if (confirmation) {
                     std::cout << "\n";
                     phonebook->load();
