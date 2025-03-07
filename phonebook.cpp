@@ -6,13 +6,13 @@
 #include <iostream>
 #include <string>
 
-#define SAVE_FILE_NAME "phonebook.txt"
+constexpr auto SAVE_FILE_NAME = "phonebook.txt";
 // Search for and load in a save file if found.
-#define LOAD_ON_STARTUP true
+constexpr auto LOAD_ON_STARTUP = true;
 // For spacing purposes.
-#define COLUMN_TAB_WIDTH "\t\t\t"
-#define DIVIDER                                                                \
-    "------------------------------------------------------------------------"
+constexpr auto COLUMN_TAB_WIDTH = "\t\t\t";
+constexpr auto DIVIDER =
+    "------------------------------------------------------------------------";
 
 // Define Person class.
 class Person {
@@ -758,6 +758,9 @@ class UserInterface {
                 std::transform(user_input.begin(), user_input.end(),
                                user_input.begin(), ::toupper);
             }
+            user_input.erase(
+                std::remove_if(user_input.begin(), user_input.end(), ::isspace),
+                user_input.end());
             return user_input;
         }
         return "";
