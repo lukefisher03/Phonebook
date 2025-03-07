@@ -758,6 +758,8 @@ class UserInterface {
                 std::transform(user_input.begin(), user_input.end(),
                                user_input.begin(), ::toupper);
             }
+
+            // Erase whitespace in user input.
             user_input.erase(
                 std::remove_if(user_input.begin(), user_input.end(), ::isspace),
                 user_input.end());
