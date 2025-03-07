@@ -44,6 +44,11 @@ class Person {
                 continue;
             }
 
+            // Skip whitespace in save file
+            if (s[i] == ' ') {
+                continue;
+            }
+
             switch (comma_count) {
             case 0:
                 first.push_back(s[i]);
