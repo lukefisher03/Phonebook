@@ -8,7 +8,9 @@
 #include <string>
 
 #define SAVE_FILE_NAME "phonebook.txt"
-// For spacing purposes
+// Search for and load in a save file if found.
+#define LOAD_ON_STARTUP true
+// For spacing purposes.
 #define COLUMN_TAB_WIDTH "\t\t\t\t"
 #define DIVIDER                                                                \
     "------------------------------------------------------------------------" \
@@ -476,8 +478,16 @@ class UserInterface {
     // Store a pointer to a book. This allows us to add a prebuild book if we
     // wanted.
     Book *phonebook;
-    UserInterface(Book &phonebook) : phonebook(&phonebook) {
+    bool load_on_startup;
+    UserInterface(Book &phonebook)
+        : phonebook(&phonebook), load_on_startup(LOAD_ON_STARTUP) {
         std::cout << "Initializing program..." << std::endl;
+        if (load_on_startup) {
+            std::cout << "Looking for save file" << std::endl;
+            if (phonebook.load()) {
+                std::cout << "Found " << SAVE_FILE_NAME << std::endl;
+            }
+        }
         main_loop();
     }
 
@@ -619,12 +629,20 @@ class UserInterface {
                 std::cout << DIVIDER << std::endl;
                 std::cout << "Save Phonebook" << std::endl;
                 std::cout << DIVIDER << std::endl;
+                bool confirmation =
+                    get_confirmation("Saving will overwrite previous save, "
+                                     "continue? (y/n)\n: ");
+                if (!confirmation) {
+                    std::cout << "\nCancelled\n" << std::endl;
+                    break;
+                }
                 if (phonebook->save()) {
                     std::cout << "\nSuccessfully saved as " << SAVE_FILE_NAME
+                              << "\n"
                               << std::endl;
                 } else {
                     std::cout
-                        << "\nSave failed. Ensure the phonebook isn't empty."
+                        << "\nSave failed. Ensure the phonebook isn't empty.\n"
                         << std::endl;
                 }
 
@@ -651,12 +669,12 @@ class UserInterface {
                 break;
             }
             case 9: {
-                std::cout << "Goodbye" << std::endl;
+                std::cout << "Goodbye\n" << std::endl;
                 return;
             }
 
             default:
-                std::cout << "\nNot an option, please select a number between "
+                std::cout << "\nPlease select a number between "
                              "1 and 5\n"
                           << std::endl;
                 break;
